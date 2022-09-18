@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -11,19 +11,19 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.bulkInsert("workspaces", [
+    await queryInterface.bulkInsert('workspaces', [
       {
         id: 1,
-        name: "Sleact",
-        url: "sleact",
+        name: 'Sleact',
+        url: 'sleact',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     ]);
-    await queryInterface.bulkInsert("channels", [
+    await queryInterface.bulkInsert('channels', [
       {
         id: 1,
-        name: "일반",
+        name: '일반',
         private: false,
         createdAt: new Date(),
         updatedAt: new Date(),

@@ -1,2 +1,3 @@
-# slack_clone
+## Slack Clone
+
 slack clone project

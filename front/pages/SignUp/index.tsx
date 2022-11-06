@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Success, Error, Form, Label, Input, LinkContainer, Button, Header } from './styles';
 import { Link } from 'react-router-dom';
 import useInput from '@hooks/useInput';
-Link;
 
 const SignUp = () => {
   // 제네릭을 사용해 커스텀 훅의 타입을 지정해주면, state들의 타입이 자동 추론됨.

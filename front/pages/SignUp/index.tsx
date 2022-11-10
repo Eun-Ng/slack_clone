@@ -1,11 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { Success, Error, Form, Label, Input, LinkContainer, Button, Header } from './styles';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import useInput from '@hooks/useInput';
+import fetcher from '@utils/fetcher';
+import useSWR from 'swr';
 
 const SignUp = () => {
-  // 제네릭을 사용해 커스텀 훅의 타입을 지정해주면, state들의 타입이 자동 추론됨.
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, , setPassword] = useInput('');
@@ -53,6 +56,14 @@ const SignUp = () => {
     },
     [email, nickname, password, passwordCheck, mismatchError],
   );
+
+  if (data === undefined) {
+    return <div>화면 로딩 중입니다.</div>;
+  }
+
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">

@@ -8,6 +8,7 @@ import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
   const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -18,7 +19,7 @@ const LogIn = () => {
       axios
         .post('/api/users/login', { email, password }, { withCredentials: true })
         .then((response) => {
-          mutate();
+          mutate(response.data, false);
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
@@ -27,13 +28,13 @@ const LogIn = () => {
     [email, password],
   );
 
-  // if (data === undefined) {
-  //   return <div>로딩중...</div>;
-  // }
+  if (data) {
+    return <Redirect to="/workspace/channel" />;
+  }
 
-  // if (data) {
-  //   return <Redirect to="/workspace/sleact/channel/일반"></Redirect>;
-  // }
+  if (data === undefined) {
+    return <div>화면 로딩 중입니다.</div>;
+  }
 
   // console.log(error, userData);
   // if (!error && userData) {

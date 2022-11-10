@@ -5,7 +5,7 @@ import App from '@layouts/App';
 
 render(
   <BrowserRouter>
-    <App />,
+    <App />
   </BrowserRouter>,
   document.querySelector('#app'),
 );

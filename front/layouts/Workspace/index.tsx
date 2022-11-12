@@ -1,3 +1,4 @@
+import { Header } from '@layouts/Workspace/styles';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { FC, useCallback } from 'react';
@@ -23,6 +24,7 @@ const Workspace: FC = ({ children }) => {
 
   return (
     <div>
+      <Header></Header>
       <button onClick={onLogout}>로그아웃</button>
       {children}
     </div>

@@ -1,8 +1,19 @@
-import { Header } from '@layouts/Workspace/styles';
+import {
+  Header,
+  ProfileImg,
+  RightMenu,
+  WorkspaceWrapper,
+  Workspaces,
+  Channels,
+  Chats,
+  WorkspaceName,
+  MenuScroll,
+} from '@layouts/Workspace/styles';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { FC, useCallback } from 'react';
 import { Redirect } from 'react-router-dom';
+import gravatar from 'gravatar';
 import useSWR from 'swr';
 
 const Workspace: FC = ({ children }) => {
@@ -24,8 +35,20 @@ const Workspace: FC = ({ children }) => {
 
   return (
     <div>
-      <Header></Header>
+      <Header>
+        <RightMenu>
+          <ProfileImg src={gravatar.url(data.email, { s: '20px', d: 'retro' })} alt={data.nickname} />
+        </RightMenu>
+      </Header>
       <button onClick={onLogout}>로그아웃</button>
+      <WorkspaceWrapper>
+        <Workspaces>test</Workspaces>
+        <Channels>
+          <WorkspaceName>Slack Clone</WorkspaceName>
+          <MenuScroll>menu scroll</MenuScroll>
+        </Channels>
+        <Chats>chats</Chats>
+      </WorkspaceWrapper>
       {children}
     </div>
   );

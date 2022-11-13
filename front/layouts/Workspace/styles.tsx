@@ -19,6 +19,7 @@ export const ProfileImg = styled.img`
   position: absolute;
   top: 5px;
   right: 16px;
+  border-radius: 3px;
 `;
 
 export const ProfileModal = styled.div`

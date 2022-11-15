@@ -19,7 +19,8 @@ export const ProfileImg = styled.img`
   position: absolute;
   top: 5px;
   right: 16px;
-  border-radius: 3px;
+  border-radius: 4px;
+  cursor: pointer;
 `;
 
 export const ProfileModal = styled.div`
@@ -27,6 +28,7 @@ export const ProfileModal = styled.div`
   padding: 20px;
   & img {
     display: flex;
+    border-radius: 4px;
   }
   & > div {
     display: flex;

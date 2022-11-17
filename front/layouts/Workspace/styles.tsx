@@ -164,6 +164,9 @@ export const WorkspaceModal = styled.div`
     &:last-of-type {
       border-bottom: 1px solid rgb(28, 29, 28);
     }
+    &: hover {
+      font-weight: bold;
+    }
   }
 `;
 
@@ -180,6 +183,9 @@ export const AddButton = styled.button`
   background: transparent;
   border: none;
   cursor: pointer;
+  &: hover {
+    scale: 1.2;
+  }
 `;
 
 export const WorkspaceButton = styled.button`
@@ -194,4 +200,7 @@ export const WorkspaceButton = styled.button`
   font-weight: 700;
   color: black;
   cursor: pointer;
+  &: hover {
+    scale: 1.2;
+  }
 `;

@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
 
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
@@ -28,12 +28,12 @@ const LogIn = () => {
     [email, password],
   );
 
-  if (data) {
-    return <Redirect to="/workspace/sleact/channel/일반" />;
-  }
-
   if (data === undefined) {
     return <div>화면 로딩 중입니다.</div>;
+  }
+
+  if (data) {
+    return <Redirect to="/workspace/sleact/channel/일반" />;
   }
 
   // console.log(error, userData);

@@ -7,7 +7,7 @@ import fetcher from '@utils/fetcher';
 import useSWR from 'swr';
 
 const SignUp = () => {
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -36,7 +36,7 @@ const SignUp = () => {
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      if (!mismatchError) {
+      if (!mismatchError && nickname) {
         console.log('서버로 회원가입하기');
         // state 초기화
         setSignUpError('');

@@ -46,15 +46,20 @@ export const ProfileModal = styled.div`
 `;
 
 export const LogOutButton = styled.button`
-  border: none;
   width: 100%;
-  border-top: 1px solid rgb(29, 28, 29);
-  background: transparent;
   display: block;
   height: 33px;
-  padding: 5px 20px 5px;
+  border: none;
+  border-top: 1px solid rgb(29, 28, 29);
+  background: transparent;
   outline: none;
-  cursor: pointer;
+  padding: 5px 20px 5px;
+  & > span {
+    &: hover {
+      cursor: pointer;
+      font-weight: bold;
+    }
+  }
 `;
 
 export const WorkspaceWrapper = styled.div`
@@ -160,12 +165,14 @@ export const WorkspaceModal = styled.div`
     border: none;
     background: transparent;
     border-top: 1px solid rgb(28, 29, 28);
-    cursor: pointer;
+    & > span {
+      &: hover {
+        font-weight: bold;
+        cursor: pointer;
+      }
+    }
     &:last-of-type {
       border-bottom: 1px solid rgb(28, 29, 28);
-    }
-    &: hover {
-      font-weight: bold;
     }
   }
 `;

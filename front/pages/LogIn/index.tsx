@@ -7,8 +7,7 @@ import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('/api/users', fetcher);
-
+  const { data: userData, error, mutate } = useSWR('/api/users', fetcher);
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -23,24 +22,22 @@ const LogIn = () => {
         })
         .catch((error) => {
           setLogInError(error.response?.data?.statusCode === 401);
+          setLogInError(true);
         });
     },
     [email, password],
   );
 
-  if (data === undefined) {
+  if (userData === undefined) {
     return <div>화면 로딩 중입니다.</div>;
   }
 
-  if (data) {
+  console.log(error, userData, logInError);
+
+  if (!error && userData) {
+    console.log('로그인됨', userData);
     return <Redirect to="/workspace/sleact/channel/일반" />;
   }
-
-  // console.log(error, userData);
-  // if (!error && userData) {
-  //   console.log('로그인됨', userData);
-  //   return <Redirect to="/workspace/sleact/channel/일반" />;
-  // }
 
   return (
     <div id="container">
@@ -57,7 +54,7 @@ const LogIn = () => {
           <div>
             <Input type="password" id="password" name="password" value={password} onChange={onChangePassword} />
           </div>
-          {logInError && <Error>이메일과 비밀번호 조합이 일치하지 않습니다.</Error>}
+          {logInError && <Error>올바른 이메일 주소와 비밀번호를 입력해주세요.</Error>}
         </Label>
         <Button type="submit">로그인</Button>
       </Form>

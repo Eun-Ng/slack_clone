@@ -98,6 +98,9 @@ export const Channels = styled.nav`
     &.selected {
       color: white;
     }
+    &: hover {
+      font-weight: bold;
+    }
   }
   & .bold {
     color: white;
@@ -135,7 +138,7 @@ export const WorkspaceName = styled.button`
   text-align: left;
   border-top: 1px solid rgb(82, 38, 83);
   border-bottom: 1px solid rgb(82, 38, 83);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 24px;
   background: transparent;
   text-overflow: ellipsis;
@@ -146,6 +149,9 @@ export const WorkspaceName = styled.button`
   margin: 0;
   color: white;
   cursor: pointer;
+  &: hover {
+    color: lightgray;
+  }
 `;
 
 export const MenuScroll = styled.div`

@@ -1,10 +1,12 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import { IUser, IUserWithOnline } from '@typings/db';
 import { CollapseButton } from './styles';
 import { NavLink } from 'react-router-dom';
+import useSocket from '@hooks/useSocket';
+import { log } from 'util';
 
 const DMList: FC = () => {
   const { workspace } = useParams<{ workspace?: string }>();
@@ -19,13 +21,31 @@ const DMList: FC = () => {
     userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher,
   );
-  // const [socket] = useSocket(workspace);
+  const [socket] = useSocket(workspace);
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [onlineList, setOnlineList] = useState<number[]>([]);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
   }, []);
+
+  useEffect(() => {
+    console.log('DMList: workspace 바뀜.', workspace);
+    setOnlineList([]);
+  }, [workspace]);
+
+  useEffect(() => {
+    socket?.on('onlineList', (data: number[]) => {
+      setOnlineList(data);
+    });
+    // socket?.on('dm', onMessage);
+    // console.log('socket on dm', socket?.hasListeners('dm'), socket);
+    return () => {
+      // socket?.off('dm', onMessage);
+      // console.log('socket off dm', socket?.hasListeners('dm'));
+      socket?.off('onlineList');
+    };
+  }, [socket]);
 
   return (
     <>

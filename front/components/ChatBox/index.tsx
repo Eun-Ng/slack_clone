@@ -30,7 +30,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) 
   const onKeyDownChat = useCallback(
     (e) => {
       if (e.key === 'Enter') {
-        if (!e.shiftKey) {
+        if (e.nativeEvent.isComposing === false && !e.shiftKey) {
           e.preventDefault();
           onSubmitForm(e);
         }

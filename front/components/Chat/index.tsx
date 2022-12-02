@@ -1,37 +1,38 @@
-import { IDM } from '@typings/db';
-import React, { VFC } from 'react';
+import { IChat, IDM } from '@typings/db';
+import React, { memo, useMemo, VFC } from 'react';
 import { ChatWrapper } from '@components/Chat/styles';
 import gravatar from 'gravatar';
 import dayjs from 'dayjs';
 import regexifyString from 'regexify-string';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router';
-import workspace from '@layouts/Workspace';
-import channel from '@pages/Channel';
+import { Link, useParams } from 'react-router-dom';
 
 interface Props {
-  data: IDM;
+  data: IDM | IChat;
 }
 
-const Chat: VFC<Props> = ({ data }) => {
+const Chat: VFC<Props> = memo(({ data }) => {
   const { workspace } = useParams<{ workspace: string; channel: string }>();
-  const user = data.Sender;
+  const user = 'Sender' in data ? data.Sender : data.User;
 
-  const result = regexifyString({
-    pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
-    decorator(match, index) {
-      const arr = match.match(/@\[(.+?)]\((\d+?)\)/)!;
-      if (arr) {
-        return (
-          <Link key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
-            @{arr[1]}
-          </Link>
-        );
-      }
-      return <br key={index} />;
-    },
-    input: data.content,
-  });
+  const result = useMemo(
+    () =>
+      regexifyString({
+        input: data.content,
+        pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
+        decorator(match, index) {
+          const arr = match.match(/@\[(.+?)]\((\d+?)\)/)!;
+          if (arr) {
+            return (
+              <Link key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
+                @{arr[1]}
+              </Link>
+            );
+          }
+          return <br key={index} />;
+        },
+      }),
+    [workspace, data.content],
+  );
 
   return (
     <ChatWrapper>
@@ -47,6 +48,6 @@ const Chat: VFC<Props> = ({ data }) => {
       </div>
     </ChatWrapper>
   );
-};
+});
 
 export default Chat;

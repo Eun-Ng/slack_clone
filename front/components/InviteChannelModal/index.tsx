@@ -27,6 +27,7 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
   const onInviteMember = useCallback(
     (e) => {
       e.preventDefault();
+      if (!newMember || !newMember.trim()) return;
       axios
         .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
           email: newMember,

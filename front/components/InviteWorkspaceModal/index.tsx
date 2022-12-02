@@ -8,6 +8,7 @@ import fetcher from '@utils/fetcher';
 import Modal from '@components/Modal';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 interface Props {
   show: boolean;
@@ -24,24 +25,39 @@ const InviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
     fetcher,
   );
 
-  const onInviteMember = useCallback((e) => {
-    e.preventDefault();
-    if (!newMember || !newMember.trim()) return; // 인풋창 검사
-
-    axios
-      .post(`/api/workspaces/${workspace}/members`, {
-        email: newMember,
-      })
-      .then((response) => {
-        mutateMember(response.data, false);
-        setShowInviteWorkspaceModal(false);
-        setNewMember('');
-      })
-      .catch((error) => {
-        console.dir(error);
-        toast.error(error.response?.data, { position: 'bottom-center' });
-      });
-  }, []);
+  const onInviteMember = useCallback(
+    (e) => {
+      console.log(newMember, userData?.email);
+      e.preventDefault();
+      if (!newMember || !newMember.trim()) return; // 인풋창 검사
+      if (newMember === userData?.email) {
+        Swal.fire({
+          icon: 'error',
+          text: '이미 존재하는 사용자입니다.',
+        });
+        return;
+      } else if (newMember !== userData?.email) {
+        Swal.fire({
+          icon: 'error',
+          text: '존재하지 않는 사용자입니다.',
+        });
+      }
+      axios
+        .post(`/api/workspaces/${workspace}/members`, {
+          email: newMember,
+        })
+        .then((response) => {
+          mutateMember(response.data, false);
+          setShowInviteWorkspaceModal(false);
+          setNewMember('');
+        })
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: 'bottom-center' });
+        });
+    },
+    [workspace, newMember],
+  );
 
   return (
     <Modal show={show} onCloseModal={onCloseModal}>

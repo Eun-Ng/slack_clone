@@ -33,5 +33,5 @@ export const DragOver = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 30px;
 `;

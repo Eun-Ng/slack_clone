@@ -13,6 +13,7 @@ import Scrollbars from 'react-custom-scrollbars-2';
 import axios from 'axios';
 import chatDateSection from '@utils/chatDateSection';
 import InviteChannelModal from '@components/InviteChannelModal';
+import { toast } from 'react-toastify';
 
 const Channel = () => {
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
@@ -91,6 +92,13 @@ const Channel = () => {
               setTimeout(() => {
                 scrollbarRef.current?.scrollToBottom();
               }, 50);
+            } else {
+              toast.success('새 메시지가 도착했습니다.', {
+                onClick() {
+                  scrollbarRef.current?.scrollToBottom();
+                },
+                closeOnClick: true,
+              });
             }
           }
         });
@@ -123,19 +131,6 @@ const Channel = () => {
 
   const onCloseModal = useCallback(() => {
     setShowInviteChannelModal(false);
-  }, []);
-
-  const onChangeFile = useCallback((e) => {
-    const formData = new FormData();
-    if (e.target.files) {
-      // Use DataTransferItemList interface to access the file(s)
-      for (let i = 0; i < e.target.files.length; i++) {
-        const file = e.target.files[i].getAsFile();
-        console.log('... file[' + i + '].name = ' + file.name);
-        formData.append('image', file);
-      }
-    }
-    axios.post(`/api/workspaces/${workspace}/channels/${channel}/images`, formData).then(() => {});
   }, []);
 
   const onDrop = useCallback(

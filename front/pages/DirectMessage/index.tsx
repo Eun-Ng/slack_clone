@@ -71,27 +71,30 @@ const DirectMessage = () => {
     [chat, chatData, userData, myData, workspace, id],
   );
 
-  const onMessage = useCallback((data: IDM) => {
-    // id는 상대방 아이디
-    if (data.SenderId === Number(id) && myData.id !== Number(id)) {
-      mutateChat((chatData) => {
-        chatData?.[0].unshift(data);
-        return chatData;
-      }, false).then(() => {
-        if (scrollbarRef.current) {
-          if (
-            scrollbarRef.current.getScrollHeight() <
-            scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
-          ) {
-            console.log('scrollToBottom!', scrollbarRef.current?.getValues());
-            setTimeout(() => {
-              scrollbarRef.current?.scrollToBottom();
-            }, 50);
+  const onMessage = useCallback(
+    (data: IDM) => {
+      // id는 상대방 아이디
+      if (data.SenderId === Number(id) && myData.id !== Number(id)) {
+        mutateChat((chatData) => {
+          chatData?.[0].unshift(data);
+          return chatData;
+        }, false).then(() => {
+          if (scrollbarRef.current) {
+            if (
+              scrollbarRef.current.getScrollHeight() <
+              scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+            ) {
+              console.log('scrollToBottom!', scrollbarRef.current?.getValues());
+              setTimeout(() => {
+                scrollbarRef.current?.scrollToBottom();
+              }, 50);
+            }
           }
-        }
-      });
-    }
-  }, []);
+        });
+      }
+    },
+    [id, myData, mutateChat],
+  );
 
   useEffect(() => {
     socket?.on('dm', onMessage);

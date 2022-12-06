@@ -13,6 +13,8 @@ import { IDM } from '@typings/db';
 import chatDateSection from '@utils/chatDateSection';
 import Scrollbars from 'react-custom-scrollbars-2';
 import useSocket from '@hooks/useSocket';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -88,6 +90,13 @@ const DirectMessage = () => {
               setTimeout(() => {
                 scrollbarRef.current?.scrollToBottom();
               }, 50);
+            } else {
+              toast.success('새 메시지가 도착했습니다.', {
+                onClick() {
+                  scrollbarRef.current?.scrollToBottom();
+                },
+                closeOnClick: true,
+              });
             }
           }
         });
@@ -161,6 +170,7 @@ const DirectMessage = () => {
       </Header>
       <ChatList chatSections={chatSections} ref={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
+      <ToastContainer position="bottom-center" />
       {dragOver && <DragOver>이미지 업로드</DragOver>}
     </Container>
   );

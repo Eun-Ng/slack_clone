@@ -13,7 +13,8 @@ import Scrollbars from 'react-custom-scrollbars-2';
 import axios from 'axios';
 import chatDateSection from '@utils/chatDateSection';
 import InviteChannelModal from '@components/InviteChannelModal';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Channel = () => {
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
@@ -197,6 +198,7 @@ const Channel = () => {
         onCloseModal={onCloseModal}
         setShowInviteChannelModal={setShowInviteChannelModal}
       />
+      <ToastContainer position="bottom-center" />
       {dragOver && <DragOver>이미지 업로드</DragOver>}
     </Container>
   );

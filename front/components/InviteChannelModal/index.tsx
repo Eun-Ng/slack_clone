@@ -8,6 +8,7 @@ import Modal from '@components/Modal';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 interface Props {
   show: boolean;
@@ -23,11 +24,33 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
     userData && channel ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
+  const { data: memberEmails } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const membersEmail = memberEmails?.map((v) => v.email);
 
   const onInviteMember = useCallback(
     (e) => {
       e.preventDefault();
       if (!newMember || !newMember.trim()) return;
+
+      if (membersEmail !== undefined) {
+        membersEmail?.forEach((v) => {
+          if (newMember === v) {
+            Swal.fire({
+              icon: 'error',
+              text: '이미 채널에 존재하는 사용자입니다.',
+            });
+          }
+        });
+
+        if (!membersEmail.includes(newMember)) {
+          Swal.fire({
+            icon: 'error',
+            text: '존재하지 않는 사용자입니다.',
+          });
+        }
+        return;
+      }
+
       axios
         .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
           email: newMember,

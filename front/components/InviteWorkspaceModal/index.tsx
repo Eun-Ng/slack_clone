@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
@@ -7,7 +7,6 @@ import { IChannel, IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import Modal from '@components/Modal';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
 interface Props {
@@ -24,24 +23,33 @@ const InviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
     userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher,
   );
+  const { data: memberEmails } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const membersEmail = memberEmails?.map((v) => v.email);
 
   const onInviteMember = useCallback(
     (e) => {
-      console.log(newMember, userData?.email);
       e.preventDefault();
       if (!newMember || !newMember.trim()) return; // 인풋창 검사
-      if (newMember === userData?.email) {
-        Swal.fire({
-          icon: 'error',
-          text: '이미 존재하는 사용자입니다.',
+
+      if (membersEmail !== undefined) {
+        membersEmail?.forEach((v) => {
+          if (newMember === v) {
+            Swal.fire({
+              icon: 'error',
+              text: '이미 워크스페이스에 존재하는 사용자입니다.',
+            });
+          }
         });
+
+        if (!membersEmail.includes(newMember)) {
+          Swal.fire({
+            icon: 'error',
+            text: '존재하지 않는 사용자입니다.',
+          });
+        }
         return;
-      } else if (newMember !== userData?.email) {
-        Swal.fire({
-          icon: 'error',
-          text: '존재하지 않는 사용자입니다.',
-        });
       }
+
       axios
         .post(`/api/workspaces/${workspace}/members`, {
           email: newMember,
@@ -53,7 +61,6 @@ const InviteWorkspaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
         })
         .catch((error) => {
           console.dir(error);
-          toast.error(error.response?.data, { position: 'bottom-center' });
         });
     },
     [workspace, newMember],

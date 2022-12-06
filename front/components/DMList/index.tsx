@@ -6,7 +6,6 @@ import { IUser, IUserWithOnline } from '@typings/db';
 import { CollapseButton } from './styles';
 import { NavLink } from 'react-router-dom';
 import useSocket from '@hooks/useSocket';
-import { log } from 'util';
 
 const DMList: FC = () => {
   const { workspace } = useParams<{ workspace?: string }>();

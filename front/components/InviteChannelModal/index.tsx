@@ -24,7 +24,10 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
     userData && channel ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
-  const { data: memberEmails } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const { data: memberEmails } = useSWR<IUser[]>(
+    userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
+    fetcher,
+  );
   const membersEmail = memberEmails?.map((v) => v.email);
 
   const onInviteMember = useCallback(
@@ -37,7 +40,7 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
           if (userData && newMember === v) {
             Swal.fire({
               icon: 'error',
-              text: '이미 채널에 존재하는 사용자입니다.',
+              text: '이미 채널에  존재하는 사용자입니다.',
             });
             return;
           }

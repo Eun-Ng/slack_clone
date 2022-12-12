@@ -43,11 +43,11 @@ const Chat: VFC<Props> = memo(({ data }) => {
   return (
     <ChatWrapper>
       <div className="chat-img">
-        <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
+        <img src={gravatar.url(user?.email, { s: '36px', d: 'retro' })} alt={user?.nickname} />
       </div>
       <div className="chat-text">
         <div className="chat-user">
-          <b>{user.nickname}</b>
+          <b>{user?.nickname}</b>
           <span>{dayjs(data.createdAt).format('h:mm A')}</span>
         </div>
         <p>{result}</p>

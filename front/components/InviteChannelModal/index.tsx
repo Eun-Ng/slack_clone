@@ -33,39 +33,32 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
       if (!newMember || !newMember.trim()) return;
 
       if (membersEmail !== undefined) {
-        membersEmail?.forEach((v) => {
-          if (newMember === v) {
+        membersEmail?.forEach((v, i) => {
+          if (userData && newMember === v) {
             Swal.fire({
               icon: 'error',
               text: '이미 채널에 존재하는 사용자입니다.',
             });
+            return;
           }
         });
 
-        if (!membersEmail.includes(newMember)) {
-          Swal.fire({
-            icon: 'error',
-            text: '존재하지 않는 사용자입니다.',
+        axios
+          .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
+            email: newMember,
+          })
+          .then(() => {
+            mutateMembers();
+            setShowInviteChannelModal(false);
+            setNewMember('');
+          })
+          .catch((error) => {
+            console.dir(error);
+            toast.error(error.response?.data, { position: 'bottom-center' });
           });
-        }
-        return;
       }
-
-      axios
-        .post(`/api/workspaces/${workspace}/channels/${channel}/members`, {
-          email: newMember,
-        })
-        .then(() => {
-          mutateMembers();
-          setShowInviteChannelModal(false);
-          setNewMember('');
-        })
-        .catch((error) => {
-          console.dir(error);
-          toast.error(error.response?.data, { position: 'bottom-center' });
-        });
     },
-    [newMember],
+    [channel, newMember, mutateMembers, setNewMember, setShowInviteChannelModal, workspace],
   );
 
   return (

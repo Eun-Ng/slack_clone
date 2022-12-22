@@ -18,7 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Channel = () => {
   const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
-  const { data: myData } = useSWR('/api/users', fetcher);
+  const { data: userData } = useSWR<IUser>('/api/users', fetcher);
   const [chat, onChangeChat, setChat] = useInput('');
   const { data: channelData } = useSWR<IChannel>(`/api/workspaces/${workspace}/channels/${channel}`, fetcher);
   const {
@@ -30,7 +30,7 @@ const Channel = () => {
     fetcher,
   );
   const { data: channelMembersData } = useSWR<IUser[]>(
-    myData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
+    userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
   const [socket] = useSocket(workspace);
@@ -44,7 +44,7 @@ const Channel = () => {
     (e) => {
       e.preventDefault();
       console.log('DM Chat');
-      if (chat?.trim() && chatData && channelData) {
+      if (chat?.trim() && chatData && channelData && userData) {
         const savedChat = chat;
 
         // Optimistic UI
@@ -52,34 +52,35 @@ const Channel = () => {
           prevChatData?.[0].unshift({
             id: (chatData[0][0]?.id || 0) + 1,
             content: savedChat,
-            UserId: myData.id,
-            User: myData,
+            UserId: userData.id,
+            User: userData,
             ChannelId: channelData.id,
             Channel: channelData,
             createdAt: new Date(),
           });
           return prevChatData;
         }, false).then(() => {
+          localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
           setChat('');
-          scrollbarRef.current?.scrollToBottom();
+          if (scrollbarRef.current) {
+            console.log('scrollToBottom!', scrollbarRef.current?.getValues());
+            scrollbarRef.current.scrollToBottom();
+          }
         });
         axios
           .post(`/api/workspaces/${workspace}/channels/${channel}/chats`, {
-            content: chat,
-          })
-          .then(() => {
-            mutateChat();
+            content: savedChat,
           })
           .catch(console.error);
       }
     },
-    [chat, chatData, channelData, myData, workspace, channel],
+    [chat, chatData, channelData, userData, workspace, channel, mutateChat, setChat],
   );
 
   const onMessage = useCallback(
     (data: IChat) => {
       // id는 상대방 아이디
-      if ((data.Channel.name === channel && data.content.startsWith('uploads\\')) || data.UserId !== myData?.id) {
+      if ((data.Channel.name === channel && data.content.startsWith('uploads\\')) || data.UserId !== userData?.id) {
         mutateChat((chatData) => {
           chatData?.[0].unshift(data);
           return chatData;
@@ -105,7 +106,7 @@ const Channel = () => {
         });
       }
     },
-    [channel, myData],
+    [channel, userData],
   );
 
   useEffect(() => {
@@ -118,7 +119,7 @@ const Channel = () => {
   // 로딩 시 채팅 스크롤바 최하단으로
   useEffect(() => {
     if (chatData?.length === 1) {
-      console.log('toBottomWhenLoadede', scrollbarRef.current);
+      console.log('toBottomWhenLoaded', scrollbarRef.current);
       setTimeout(() => {
         console.log('scrollbar', scrollbarRef.current);
         scrollbarRef.current?.scrollToBottom();
@@ -168,7 +169,7 @@ const Channel = () => {
     setDragOver(true);
   }, []);
 
-  if (!myData || !myData) {
+  if (!userData || !userData) {
     return null;
   }
 

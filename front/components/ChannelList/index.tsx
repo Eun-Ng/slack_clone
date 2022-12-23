@@ -1,23 +1,23 @@
-import { CollapseButton } from '@components/DMList/styles';
-import EachChannel from '@components/EachChannel';
-import { IChannel, IUser } from '@typings/db';
-import fetcher from '@utils/fetcher';
 import React, { FC, useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 import useSWR from 'swr';
+import { IChannel, IUser } from '@typings/db';
+import fetcher from '@utils/fetcher';
+import { NavLink } from 'react-router-dom';
+import { CollapseButton } from '@components/DMList/styles';
 
-interface Props {
-  channelData?: IChannel[];
-  userData?: IUser;
-}
-
-const ChannelList: FC<Props> = () => {
+const ChannelList: FC = () => {
   const { workspace } = useParams<{ workspace?: string }>();
-  const [channelCollapse, setChannelCollapse] = useState(false);
-  const { data: userData } = useSWR<IUser>('/api/users', fetcher, {
-    dedupingInterval: 2000, // 2초
+
+  const {
+    data: userData,
+    error,
+    mutate,
+  } = useSWR<IUser>('/api/users', fetcher, {
+    dedupingInterval: 2000,
   });
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
+  const [channelCollapse, setChannelCollapse] = useState(false);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -38,7 +38,15 @@ const ChannelList: FC<Props> = () => {
       <div>
         {!channelCollapse &&
           channelData?.map((channel) => {
-            return <EachChannel key={channel.id} channel={channel} />;
+            return (
+              <NavLink
+                key={channel.name}
+                activeClassName="selected"
+                to={`/workspace/${workspace}/channel/${channel.name}`}
+              >
+                <span># {channel.name}</span>
+              </NavLink>
+            );
           })}
       </div>
     </>
